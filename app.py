@@ -2,9 +2,9 @@ import streamlit as st
 import pandas as pd
 import pickle
 
-# Load the trained model
+# Load the trained model pipeline (includes scaler and model)
 try:
-    model = pickle.load(open('revenue_model.pkl', 'rb'))
+    pipeline = pickle.load(open('revenue_model.pkl', 'rb'))
 except FileNotFoundError:
     st.error("Error: revenue_model.pkl not found. Please ensure the model file is in the project folder.")
     st.stop()
@@ -13,19 +13,34 @@ except FileNotFoundError:
 st.title("YouTube Revenue Predictor")
 
 # Input fields with default values
+st.write("Enter the video metrics to predict revenue:")
 duration = st.number_input("Video Duration (seconds)", min_value=0, value=300, step=1)
 views = st.number_input("Estimated Views", min_value=0, value=10000, step=100)
 likes = st.number_input("Estimated Likes", min_value=0, value=500, step=10)
 shares = st.number_input("Estimated Shares", min_value=0, value=50, step=5)
 subscribers = st.number_input("Estimated New Subscribers", min_value=0, value=10, step=1)
+ctr = st.number_input("Video Thumbnail CTR (%)", min_value=0.0, value=5.0, step=0.1)
 
 # Prediction button
 if st.button("Predict Revenue"):
-    # Create input DataFrame with correct feature names
-    input_data = pd.DataFrame([[duration, views, likes, shares, subscribers]], 
-                              columns=['Video Duration', 'Views', 'Likes', 'Shares', 'New Subscribers'])
     try:
-        prediction = model.predict(input_data)[0]
-        st.write(f"Predicted Revenue: ${prediction:.2f}")
+        # Create input DataFrame with interaction terms
+        input_data = pd.DataFrame([[duration, views, likes, shares, subscribers, ctr]], 
+                                  columns=['Video Duration', 'Views', 'Likes', 'Shares', 
+                                           'New Subscribers', 'Video Thumbnail CTR (%)'])
+        input_data['Views_Likes_Interaction'] = input_data['Views'] * input_data['Likes']
+        input_data['Views_CTR_Interaction'] = input_data['Views'] * input_data['Video Thumbnail CTR (%)']
+
+        # Ensure the order of features matches training
+        feature_order = ['Video Duration', 'Views', 'Likes', 'Shares', 'New Subscribers', 
+                         'Video Thumbnail CTR (%)', 'Views_Likes_Interaction', 'Views_CTR_Interaction']
+        input_data = input_data[feature_order]
+
+        # Make prediction using the pipeline (scaler + model)
+        prediction = pipeline.predict(input_data)[0]
+        st.write(f"**Predicted Revenue:** ${prediction:.2f}")
     except Exception as e:
         st.error(f"Prediction failed: {str(e)}")
+
+# Additional info
+st.write("\n**Note:** This model uses advanced features like interaction terms and Random Forest for improved accuracy.")
