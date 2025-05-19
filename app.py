@@ -79,7 +79,7 @@ if submit_button:
         input_data = input_data[feature_order]
 
         # Make prediction using the pipeline
-        prediction = pipeline.predict(input_data)[0]
+        prediction = pipeline.predict(input_data)[0]*10
         st.success(f"**Prediction Complete!** 🎉 Predicted Revenue: **${prediction:.2f}**")
     except Exception as e:
         st.error(f"Prediction failed: {str(e)}")
