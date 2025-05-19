@@ -24,7 +24,17 @@ with st.form(key="input_form"):
     likes = st.number_input("Estimated Likes", min_value=0, value=500, step=10)
     shares = st.number_input("Estimated Shares", min_value=0, value=50, step=5)
     subscribers = st.number_input("Estimated New Subscribers", min_value=0, value=10, step=1)
-    ctr = st.number_input("Video Thumbnail CTR (%)", min_value=0.0, value=5.0, step=0.1)
+
+    # Use columns to place the CTR input and its explanation side by side
+    col1, col2 = st.columns([3, 2])  # Split the layout into two columns
+    with col1:
+        ctr = st.number_input("Video Thumbnail CTR (%)", min_value=0.0, value=5.0, step=0.1)
+    with col2:
+        st.markdown("""
+        **What is Video Thumbnail CTR (%)?**  
+        It’s the percentage of viewers who click on your video after seeing the thumbnail.  
+        Example: If 100 people see your thumbnail and 5 click, the CTR is 5%.
+        """)
 
     # Prediction button
     submit_button = st.form_submit_button(label="Predict Revenue")
