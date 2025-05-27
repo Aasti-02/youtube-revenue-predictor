@@ -16,10 +16,9 @@ st.markdown("""
 Enter your video metrics below to estimate the revenue. This app uses a Random Forest model for accurate predictions.
 """)
 
-# Input fields with default values
 st.header("📊 Video Metrics")
 with st.form(key="input_form"):
-    duration = st.number_input("Video Duration (seconds)", min_value=0, value=300, step=1)
+    duration = st.number_input("Video Duration (minutes)", min_value=0.0, value=5.0, step=0.1)
     views = st.number_input("Estimated Views", min_value=0, value=10000, step=100)
     likes = st.number_input("Estimated Likes", min_value=0, value=500, step=10)
     shares = st.number_input("Estimated Shares", min_value=0, value=50, step=5)
