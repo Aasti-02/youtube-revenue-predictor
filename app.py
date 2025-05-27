@@ -87,5 +87,4 @@ if submit_button:
 st.markdown("""
 ---
 **Note:** This model uses advanced features like interaction terms and a Random Forest algorithm for improved accuracy.  
-For more details, check the [GitHub repository](https://github.com/Aasti-02/youtube-revenue-predictor).
 """)
